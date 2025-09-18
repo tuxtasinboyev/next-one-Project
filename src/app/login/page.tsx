@@ -5,27 +5,40 @@ import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 
+interface SafeUser {
+    id: number
+    email: string
+    name: string
+    regionId: number
+    districtId: number
+    villageId: number
+}
+
+interface LoginResponse {
+    token: string
+    safeUser: SafeUser
+}
+
 export default function Login() {
     const router = useRouter()
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
+
     const handleLogin = async () => {
-        if (!email || !password) {
-            return alert('Iltimos, email va parolni kiriting')
-        }
+        if (!email || !password) return alert('Iltimos, email va parolni kiriting')
 
         try {
-            const res = await axios.post('/api/auth/login', { email, password })
-            const { token, safeUser } = res.data
+            const res = await axios.post<LoginResponse>('/api/auth/login', { email, password })
+            const { token } = res.data
 
             localStorage.setItem('token', token)
-
             alert('Muvaffaqiyatli login!')
             router.push('/')
         } catch (err: any) {
             alert(err.response?.data?.message || 'Xatolik yuz berdi')
         }
     }
+
     return (
         <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-400 via-blue-500 to-purple-600 p-6">
             <div className="bg-white rounded-3xl shadow-2xl p-8 w-full max-w-md space-y-4">
@@ -53,12 +66,13 @@ export default function Login() {
                 >
                     Kirish
                 </button>
+
                 <div className="text-center mt-4">
                     <Link
                         href="/register"
                         className="px-6 py-2 bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-lg shadow-md transition duration-300"
                     >
-                        Ro'yxatdan o'tish
+                        Ro&apos;yxatdan o&apos;tish
                     </Link>
                 </div>
             </div>

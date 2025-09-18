@@ -76,7 +76,7 @@ export default function Register() {
             });
 
             alert(res.data.message);
-            const { token, user } = res.data;
+            const { token } = res.data;
 
             localStorage.setItem('token', token);
             router.push('/');
