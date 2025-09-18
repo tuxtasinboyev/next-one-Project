@@ -1,6 +1,6 @@
 'use client'
 
-import axios from 'axios'
+import axios, { AxiosError } from 'axios'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
@@ -34,8 +34,14 @@ export default function Login() {
             localStorage.setItem('token', token)
             alert('Muvaffaqiyatli login!')
             router.push('/')
-        } catch (err: any) {
-            alert(err.response?.data?.message || 'Xatolik yuz berdi')
+        } catch (err) {
+            let message = 'Xatolik yuz berdi'
+
+            if (err instanceof AxiosError && err.response?.data && 'message' in err.response.data) {
+                message = (err.response.data as { message: string }).message
+            }
+
+            alert(message)
         }
     }
 
@@ -48,7 +54,7 @@ export default function Login() {
                     type="email"
                     placeholder="Email"
                     value={email}
-                    onChange={e => setEmail(e.target.value)}
+                    onChange={(e) => setEmail(e.target.value)}
                     className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
 
@@ -56,7 +62,7 @@ export default function Login() {
                     type="password"
                     placeholder="Parol"
                     value={password}
-                    onChange={e => setPassword(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full p-3 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-400"
                 />
 
